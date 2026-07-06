@@ -1,0 +1,7 @@
+.DS_Store
+node_modules/
+# 私的使用の範囲でのみ扱うデータ(公開リポジトリに含めない)
+data/private/
+app/data/private/
+__pycache__/
+*.pyc
