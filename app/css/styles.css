@@ -118,6 +118,19 @@ p {
   color: var(--muted);
 }
 
+.question-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.difficulty {
+  color: var(--warning);
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
 .home-metrics,
 .summary-grid {
   display: grid;

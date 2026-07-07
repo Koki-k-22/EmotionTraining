@@ -5,11 +5,12 @@ import { renderReview } from "./views/review.js";
 import { renderDictionary } from "./views/dictionary.js";
 import { renderStats } from "./views/stats.js";
 
-const ROUTES = new Set(["home", "practice", "review", "dictionary", "stats"]);
+const ROUTES = new Set(["home", "practice", "reading", "review", "dictionary", "stats"]);
 
 const state = {
   route: getRoute(),
   questions: [],
+  questionSets: { practice: [], reading: [] },
   lexicon: null,
   practiceSession: null,
   reviewSession: null,
@@ -48,8 +49,14 @@ function finishSession() {
 }
 
 function startPractice() {
-  state.practiceSession = createPracticeSession(state.questions);
+  state.practiceSession = createPracticeSession(state.questionSets.practice, 10, "practice");
   navigate("practice");
+  render();
+}
+
+function startReading() {
+  state.practiceSession = createPracticeSession(state.questionSets.reading, 10, "reading");
+  navigate("reading");
   render();
 }
 
@@ -72,8 +79,20 @@ function renderView() {
   if (!state.questions.length || !state.lexicon) return renderLoading();
 
   if (state.route === "practice") {
-    if (!state.practiceSession) {
-      state.practiceSession = createPracticeSession(state.questions);
+    if (!state.practiceSession || state.practiceSession.kind !== "practice") {
+      state.practiceSession = createPracticeSession(state.questionSets.practice, 10, "practice");
+    }
+    return renderPracticeSession({
+      questions: state.questions,
+      session: state.practiceSession,
+      onUpdate: setPracticeSession,
+      onFinish: finishSession,
+    });
+  }
+
+  if (state.route === "reading") {
+    if (!state.practiceSession || state.practiceSession.kind !== "reading") {
+      state.practiceSession = createPracticeSession(state.questionSets.reading, 10, "reading");
     }
     return renderPracticeSession({
       questions: state.questions,
@@ -103,6 +122,7 @@ function renderView() {
   return renderHome({
     questions: state.questions,
     onStartPractice: startPractice,
+    onStartReading: startReading,
     navigate,
   });
 }
@@ -131,8 +151,9 @@ document.querySelectorAll("[data-route]").forEach((link) => {
 });
 
 loadAppData()
-  .then(({ questions, lexicon }) => {
+  .then(({ questions, questionSets, lexicon }) => {
     state.questions = questions;
+    state.questionSets = questionSets;
     state.lexicon = lexicon;
     render();
   })

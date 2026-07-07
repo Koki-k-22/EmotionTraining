@@ -28,3 +28,13 @@ test("不一致は unknown を返す", () => {
     matched: null,
   });
 });
+
+test("difficultyを持つ創作問題でも採点できる", () => {
+  const questionWithDifficulty = {
+    ...question,
+    difficulty: 2,
+    source: { work: "創作シナリオ", author: "", origin: "オリジナル" },
+  };
+
+  assert.equal(gradeAnswer("悔しい気持ちです", questionWithDifficulty).result, "best");
+});

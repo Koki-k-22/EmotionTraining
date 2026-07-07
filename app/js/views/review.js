@@ -2,7 +2,8 @@ import { getDueQuestionIds } from "../store.js";
 import { createReviewSession, renderPracticeSession } from "./practice.js";
 
 export function renderReview({ questions, session, onUpdate, onFinish }) {
-  const dueIds = getDueQuestionIds();
+  const questionIds = new Set(questions.map((q) => q.id));
+  const dueIds = getDueQuestionIds().filter((id) => questionIds.has(id));
 
   if (!session) {
     const root = document.createElement("section");
