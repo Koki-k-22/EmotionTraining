@@ -17,6 +17,12 @@ const RESULT_TEXT = {
   unknown: "自己採点",
 };
 
+const SESSION_TITLES = {
+  practice: "練習",
+  reading: "読解モード",
+  review: "復習",
+};
+
 function el(tag, options = {}, children = []) {
   const node = document.createElement(tag);
   for (const [key, value] of Object.entries(options)) {
@@ -35,12 +41,12 @@ function shuffle(items) {
   return [...items].sort(() => Math.random() - 0.5);
 }
 
-export function createPracticeSession(questions, count = 10) {
+export function createPracticeSession(questions, count = 10, kind = "practice") {
   const records = getRecords();
   const untried = questions.filter((q) => !records[q.id]?.attempts?.length);
   const pool = untried.length ? untried : questions;
   return {
-    kind: "practice",
+    kind,
     ids: shuffle(pool).slice(0, Math.min(count, pool.length)).map((q) => q.id),
     index: 0,
     phase: "question",
@@ -70,6 +76,20 @@ function revealPassage(q) {
   return q.passage ? q.passage.replace("〈？〉", answer) : q.context ?? "";
 }
 
+function formatSource(source = {}) {
+  const work = source.work ?? "";
+  const author = source.author ?? "";
+  if (!author) return work;
+  if (!work) return author;
+  return `${author}『${work}』`;
+}
+
+function formatDifficulty(q) {
+  const level = Number(q.difficulty);
+  if (!Number.isInteger(level) || level < 1 || level > 3) return "";
+  return `${"★".repeat(level)}${"☆".repeat(3 - level)}`;
+}
+
 function wordList(title, mark, items) {
   const block = el("section", { class: "answer-group" });
   block.append(el("h3", { text: `${mark} ${title}` }));
@@ -97,7 +117,8 @@ function cuesList(q) {
 
 function renderSummary(session, callbacks) {
   const root = el("section", { class: "screen stack" });
-  root.append(el("p", { class: "eyebrow", text: session.kind === "review" ? "復習完了" : "練習完了" }));
+  const title = SESSION_TITLES[session.kind] ?? "練習";
+  root.append(el("p", { class: "eyebrow", text: `${title}完了` }));
   root.append(el("h1", { text: "結果サマリ" }));
   const grid = el("div", { class: "summary-grid" });
   for (const key of ["best", "ok", "poor", "miss"]) {
@@ -116,8 +137,15 @@ function renderSummary(session, callbacks) {
 function renderQuestion(q, session, callbacks) {
   const root = el("section", { class: "screen stack" });
   root.append(el("p", { class: "eyebrow", text: `${session.index + 1} / ${session.ids.length}` }));
-  root.append(el("h1", { text: session.kind === "review" ? "復習" : "小説モード" }));
-  root.append(el("p", { class: "source", text: `${q.source.author}『${q.source.work}』` }));
+  root.append(el("h1", { text: SESSION_TITLES[session.kind] ?? "練習" }));
+  const meta = el("div", { class: "question-meta" }, [
+    el("p", { class: "source", text: formatSource(q.source) }),
+  ]);
+  const difficulty = formatDifficulty(q);
+  if (difficulty) {
+    meta.append(el("p", { class: "difficulty", text: difficulty, "aria-label": `難易度 ${difficulty}` }));
+  }
+  root.append(meta);
   root.append(el("article", { class: "passage", text: q.passage ?? q.context ?? "" }));
 
   const form = el("form", { class: "answer-form" });
@@ -165,7 +193,7 @@ function renderAnswer(q, session, callbacks) {
     root.append(self);
   }
 
-  root.append(el("p", { class: "source", text: `${q.source.author}『${q.source.work}』` }));
+  root.append(el("p", { class: "source", text: formatSource(q.source) }));
   root.append(el("article", { class: "passage", html: revealPassage(q) }));
   root.append(wordList("ベスト", "◎", [{ word: q.answer.word }]));
   root.append(wordList("許容", "○", q.ok ?? []));

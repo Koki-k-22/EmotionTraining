@@ -1,10 +1,11 @@
-import { getReviewCount, getStreak } from "../store.js";
+import { getDueQuestionIds, getStreak } from "../store.js";
 
-export function renderHome({ questions, onStartPractice, navigate }) {
+export function renderHome({ questions, onStartPractice, onStartReading, navigate }) {
   const root = document.createElement("section");
   root.className = "screen stack";
   const streak = getStreak();
-  const reviewCount = getReviewCount();
+  const questionIds = new Set(questions.map((q) => q.id));
+  const reviewCount = getDueQuestionIds().filter((id) => questionIds.has(id)).length;
 
   root.innerHTML = `
     <p class="eyebrow">感情ラベリング練習</p>
@@ -14,11 +15,13 @@ export function renderHome({ questions, onStartPractice, navigate }) {
       <div class="metric"><span>復習</span><strong>${reviewCount}</strong><small>問</small></div>
       <div class="metric"><span>同梱</span><strong>${questions.length}</strong><small>問</small></div>
     </div>
-    <button class="primary-btn" type="button">練習をはじめる</button>
-    <button class="secondary-btn" type="button">復習する</button>
+    <button class="primary-btn" type="button" data-action="practice">練習をはじめる</button>
+    <button class="secondary-btn" type="button" data-action="reading">読解モード（小説）</button>
+    <button class="secondary-btn" type="button" data-action="review">復習する</button>
   `;
 
-  root.querySelector(".primary-btn").addEventListener("click", onStartPractice);
-  root.querySelector(".secondary-btn").addEventListener("click", () => navigate("review"));
+  root.querySelector("[data-action='practice']").addEventListener("click", onStartPractice);
+  root.querySelector("[data-action='reading']").addEventListener("click", onStartReading);
+  root.querySelector("[data-action='review']").addEventListener("click", () => navigate("review"));
   return root;
 }
