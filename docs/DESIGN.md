@@ -1,13 +1,21 @@
-# 感情ラベリング練習アプリ 設計書 v1.1
+# 感情ラベリング練習アプリ 設計書 v1.2
 
 仕様は `SPEC.md` を正とする。v1 は小説モードのみで実装。
-v1.1(2026-07-03)で出題を2系統に拡張した:
+v1.1(2026-07-03)で出題を2系統に、v1.2(2026-07-11)で3系統に拡張した:
 
-- **練習(メイン)**: 創作CAR問題 `questions_car_v1.json`(64問、docs/AUTHORING.md 準拠、
-  ブラインドテスト全問合格)。difficulty(1〜3)を★表示
-- **読解モード**: 青空文庫由来 `questions_novel_v1.json`(ブラインドテスト合格の45問に削減)
-- 復習・成績は両モードの記録を questionId ベースで合算
-- SW キャッシュは et-v2
+- **Active Listening 練習(メイン)**: 会話形式の深層心情問題 `questions_al_v1.json`
+  (40問、docs/AUTHORING_AL.md 準拠、ブラインドテストv2全問合格+Sonnet監修済)。
+  ルートは `#al`。タブバーの「練習」はここを指す。
+  計画・理論的裏付けは docs/PLAN_ACTIVE_LISTENING.md
+- **基礎練習**: 創作CAR問題 `questions_car_v1.json`(64問、docs/AUTHORING.md 準拠、
+  ブラインドテスト全問合格。2026-07-11 に car020 の時点ズレを修正)。ルートは `#practice`
+- **読解モード**: 青空文庫由来 `questions_novel_v1.json`(ブラインドテスト合格の45問)
+- 復習・成績は全モードの記録を questionId ベースで合算
+- SW キャッシュは et-v3
+- AL問題の採点は `gradeAnswerAL`(grading.js): deep.best のキーワード群
+  (ORグループのAND、語幹部分一致)→◎ / surface 語→○ / 不一致→自己採点。
+  問題種別は `isDeepQuestion`(deep.best の有無)で判別し、`context`+`utterance` を
+  吹き出しUIで描画する(practice.js)
 
 ## 1. 技術方針
 

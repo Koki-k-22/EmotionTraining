@@ -1,4 +1,4 @@
-import { gradeAnswer } from "../grading.js";
+import { gradeAnswer, gradeAnswerAL, isDeepQuestion } from "../grading.js";
 import { getRecords, recordAttempt } from "../store.js";
 
 const RESULT_LABELS = {
@@ -17,8 +17,23 @@ const RESULT_TEXT = {
   unknown: "自己採点",
 };
 
+const RESULT_TEXT_AL = {
+  best: "深層に届いた",
+  ok: "表層止まり",
+  poor: "少しズレ",
+  miss: "もう一度",
+  unknown: "自己採点",
+};
+
+const SELF_CHECKLIST_AL = [
+  "相手の使った感情語の言い換えではなく、その裏の気持ちを言葉にした（深さ）",
+  "その推測は発話・状況に根拠がある（的確さ）",
+  "決めつけ・助言・説教・「気にしすぎ」になっていない（伝え方）",
+];
+
 const SESSION_TITLES = {
-  practice: "練習",
+  al: "Active Listening",
+  practice: "基礎練習",
   reading: "読解モード",
   review: "復習",
 };
@@ -74,6 +89,26 @@ export function createReviewSession(questions, ids) {
 function revealPassage(q) {
   const answer = `<mark>${q.answer.surface || q.answer.word}</mark>`;
   return q.passage ? q.passage.replace("〈？〉", answer) : q.context ?? "";
+}
+
+function renderScene(q) {
+  const scene = el("article", { class: "passage scene" });
+  if (q.context) scene.append(el("p", { class: "scene-context", text: q.context }));
+  if (q.utterance) scene.append(el("blockquote", { class: "utterance", text: `「${q.utterance}」` }));
+  return scene;
+}
+
+function phraseList(title, mark, items, className = "") {
+  const block = el("section", { class: `answer-group ${className}`.trim() });
+  block.append(el("h3", { text: `${mark} ${title}` }));
+  const list = el("ul", { class: "clean-list" });
+  for (const item of items) {
+    const li = el("li", {}, [el("strong", { text: item.phrase ?? item.word ?? "" })]);
+    if (item.why) li.append(el("span", { text: ` ${item.why}` }));
+    list.append(li);
+  }
+  block.append(list);
+  return block;
 }
 
 function formatSource(source = {}) {
@@ -146,15 +181,24 @@ function renderQuestion(q, session, callbacks) {
     meta.append(el("p", { class: "difficulty", text: difficulty, "aria-label": `難易度 ${difficulty}` }));
   }
   root.append(meta);
-  root.append(el("article", { class: "passage", text: q.passage ?? q.context ?? "" }));
+  const deep = isDeepQuestion(q);
+  if (deep) {
+    root.append(renderScene(q));
+  } else {
+    root.append(el("article", { class: "passage", text: q.passage ?? q.context ?? "" }));
+  }
 
   const form = el("form", { class: "answer-form" });
-  const label = el("label", { class: "field-label", for: "answer-input", text: "この人物の感情を表す一言を" });
+  const label = el("label", {
+    class: "field-label",
+    for: "answer-input",
+    text: deep ? "相手の気持ちを言葉にして返すなら？" : "この人物の感情を表す一言を",
+  });
   const input = el("input", {
     id: "answer-input",
     name: "answer",
     autocomplete: "off",
-    placeholder: "例: それは悔しいですね",
+    placeholder: deep ? "例: 軽く扱われた感じがして悔しいよね" : "例: それは悔しいですね",
     value: session.input,
   });
   const actions = el("div", { class: "button-row" }, [
@@ -173,15 +217,28 @@ function renderQuestion(q, session, callbacks) {
 
 function renderAnswer(q, session, callbacks) {
   const root = el("section", { class: "screen stack" });
+  const deep = isDeepQuestion(q);
+  const resultText = deep ? RESULT_TEXT_AL : RESULT_TEXT;
   const result = session.finalResult ?? session.autoGrade?.result ?? "unknown";
   const badge = el("div", { class: `result-badge result-${result}` }, [
     el("span", { text: RESULT_LABELS[result] }),
-    el("strong", { text: RESULT_TEXT[result] }),
+    el("strong", { text: resultText[result] }),
   ]);
   root.append(badge);
+  if (deep && result === "ok") {
+    root.append(el("p", { class: "hint", text: "感情の言い換えとしては合っています。次は、その裏にある気持ちまで言葉にしてみましょう。" }));
+  }
 
   if (session.autoGrade?.result === "unknown" && !session.finalResult) {
     root.append(el("p", { class: "hint", text: "自動照合できませんでした。答えを見て自己採点してください。" }));
+    if (deep) {
+      const check = el("section", { class: "answer-group self-check" });
+      check.append(el("h3", { text: "自己採点の観点" }));
+      const list = el("ul", { class: "clean-list" });
+      for (const item of SELF_CHECKLIST_AL) list.append(el("li", { text: item }));
+      check.append(list);
+      root.append(check);
+    }
     const self = el("div", { class: "button-row three" }, [
       el("button", { class: "primary-btn", type: "button", text: "◎" }),
       el("button", { class: "secondary-btn", type: "button", text: "○" }),
@@ -194,15 +251,35 @@ function renderAnswer(q, session, callbacks) {
   }
 
   root.append(el("p", { class: "source", text: formatSource(q.source) }));
-  root.append(el("article", { class: "passage", html: revealPassage(q) }));
-  root.append(wordList("ベスト", "◎", [{ word: q.answer.word }]));
-  root.append(wordList("許容", "○", q.ok ?? []));
-  root.append(wordList("ズレ", "△", q.poor ?? []));
-  root.append(cuesList(q));
-  root.append(el("section", { class: "answer-group" }, [
-    el("h3", { text: "解説" }),
-    el("p", { text: q.explanation }),
-  ]));
+  if (deep) {
+    root.append(renderScene(q));
+    root.append(phraseList("深層（裏にある気持ち）", "◎", q.deep.best));
+    const surfaceItems = [{
+      word: q.surface?.word ?? "",
+      why: "間違いではないが、相手の感情語の言い換え止まり",
+    }];
+    root.append(phraseList("表層（言い換え止まり）", "○", surfaceItems));
+    root.append(phraseList("ズレ・深読みしすぎ", "△", q.deep.poor ?? []));
+    root.append(cuesList(q));
+    root.append(el("section", { class: "answer-group" }, [
+      el("h3", { text: "返し方の例" }),
+      el("p", { class: "model-reply", text: q.modelReply ?? "" }),
+    ]));
+    root.append(el("section", { class: "answer-group" }, [
+      el("h3", { text: "解説" }),
+      el("p", { text: q.explanation }),
+    ]));
+  } else {
+    root.append(el("article", { class: "passage", html: revealPassage(q) }));
+    root.append(wordList("ベスト", "◎", [{ word: q.answer.word }]));
+    root.append(wordList("許容", "○", q.ok ?? []));
+    root.append(wordList("ズレ", "△", q.poor ?? []));
+    root.append(cuesList(q));
+    root.append(el("section", { class: "answer-group" }, [
+      el("h3", { text: "解説" }),
+      el("p", { text: q.explanation }),
+    ]));
+  }
 
   const next = el("button", {
     class: "primary-btn",
@@ -235,7 +312,7 @@ export function renderPracticeSession({ questions, session, onUpdate, onFinish }
 
   const callbacks = {
     submit(input) {
-      const autoGrade = gradeAnswer(input, q);
+      const autoGrade = isDeepQuestion(q) ? gradeAnswerAL(input, q) : gradeAnswer(input, q);
       const next = { ...session, input, autoGrade, finalResult: null, phase: "answer" };
       if (autoGrade.result !== "unknown") {
         recordAttempt(q.id, input, autoGrade.result);

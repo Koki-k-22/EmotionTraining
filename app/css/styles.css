@@ -402,3 +402,29 @@ input {
     grid-template-columns: 1fr;
   }
 }
+
+/* Active Listening モード */
+.scene-context {
+  color: var(--muted, #6b7280);
+  margin-bottom: 12px;
+}
+
+.utterance {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px 14px 14px 4px;
+  background: color-mix(in srgb, var(--primary), transparent 90%);
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.model-reply {
+  padding: 10px 12px;
+  border-left: 3px solid var(--primary);
+  background: color-mix(in srgb, var(--primary), transparent 94%);
+  border-radius: 0 10px 10px 0;
+}
+
+.self-check li {
+  font-size: 14px;
+}

@@ -1,4 +1,4 @@
-const CACHE_NAME = "et-v2";
+const CACHE_NAME = "et-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const ASSETS = [
   "./js/views/review.js",
   "./js/views/dictionary.js",
   "./js/views/stats.js",
+  "./data/questions_al_v1.json",
   "./data/questions_car_v1.json",
   "./data/questions_novel_v1.json",
   "./data/emotion_lexicon.json",

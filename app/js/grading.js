@@ -46,3 +46,42 @@ export function gradeAnswer(input, q) {
     matched: match.word,
   };
 }
+
+export function isDeepQuestion(q) {
+  return Boolean(q?.deep?.best?.length);
+}
+
+function matchKeyGroups(normalizedInput, keys) {
+  if (!Array.isArray(keys) || keys.length === 0) return false;
+  return keys.every((group) =>
+    Array.isArray(group) &&
+    group.some((stem) => {
+      const normalized = normalizeText(stem);
+      return normalized && normalizedInput.includes(normalized);
+    }),
+  );
+}
+
+export function gradeAnswerAL(input, q) {
+  const normalizedInput = normalizeText(input);
+  if (!normalizedInput) {
+    return { result: "unknown", matched: null };
+  }
+
+  for (const item of q?.deep?.best ?? []) {
+    if (matchKeyGroups(normalizedInput, item.keys)) {
+      return { result: "best", matched: item.phrase };
+    }
+  }
+
+  const surfaceWords = [q?.surface?.word, ...(q?.surface?.synonyms ?? [])]
+    .map((word) => ({ word, normalized: normalizeText(word) }))
+    .filter((item) => item.normalized)
+    .sort((a, b) => b.normalized.length - a.normalized.length);
+  const surfaceHit = surfaceWords.find((item) => normalizedInput.includes(item.normalized));
+  if (surfaceHit) {
+    return { result: "ok", matched: surfaceHit.word };
+  }
+
+  return { result: "unknown", matched: null };
+}
