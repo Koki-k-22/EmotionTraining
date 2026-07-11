@@ -5,12 +5,12 @@ import { renderReview } from "./views/review.js";
 import { renderDictionary } from "./views/dictionary.js";
 import { renderStats } from "./views/stats.js";
 
-const ROUTES = new Set(["home", "practice", "reading", "review", "dictionary", "stats"]);
+const ROUTES = new Set(["home", "al", "practice", "reading", "review", "dictionary", "stats"]);
 
 const state = {
   route: getRoute(),
   questions: [],
-  questionSets: { practice: [], reading: [] },
+  questionSets: { al: [], practice: [], reading: [] },
   lexicon: null,
   practiceSession: null,
   reviewSession: null,
@@ -48,6 +48,12 @@ function finishSession() {
   render();
 }
 
+function startAL() {
+  state.practiceSession = createPracticeSession(state.questionSets.al, 10, "al");
+  navigate("al");
+  render();
+}
+
 function startPractice() {
   state.practiceSession = createPracticeSession(state.questionSets.practice, 10, "practice");
   navigate("practice");
@@ -77,6 +83,18 @@ function renderError(message) {
 function renderView() {
   if (state.error) return renderError(state.error);
   if (!state.questions.length || !state.lexicon) return renderLoading();
+
+  if (state.route === "al") {
+    if (!state.practiceSession || state.practiceSession.kind !== "al") {
+      state.practiceSession = createPracticeSession(state.questionSets.al, 10, "al");
+    }
+    return renderPracticeSession({
+      questions: state.questions,
+      session: state.practiceSession,
+      onUpdate: setPracticeSession,
+      onFinish: finishSession,
+    });
+  }
 
   if (state.route === "practice") {
     if (!state.practiceSession || state.practiceSession.kind !== "practice") {
@@ -121,6 +139,7 @@ function renderView() {
 
   return renderHome({
     questions: state.questions,
+    onStartAL: startAL,
     onStartPractice: startPractice,
     onStartReading: startReading,
     navigate,
