@@ -51,6 +51,24 @@ export function isDeepQuestion(q) {
   return Boolean(q?.deep?.best?.length);
 }
 
+export function isFollowupQuestion(q) {
+  return q?.kind === "followup";
+}
+
+export function gradeFollowup(choice, q) {
+  const key = String(choice ?? "");
+  if (!key) {
+    return { result: "unknown", matched: null };
+  }
+  if (key === q?.answer) {
+    return { result: "best", matched: key };
+  }
+  if ((q?.ok ?? []).includes(key)) {
+    return { result: "ok", matched: key };
+  }
+  return { result: "miss", matched: key };
+}
+
 function matchKeyGroups(normalizedInput, keys) {
   if (!Array.isArray(keys) || keys.length === 0) return false;
   return keys.every((group) =>
