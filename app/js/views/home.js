@@ -1,6 +1,6 @@
 import { getDueQuestionIds, getStreak } from "../store.js";
 
-export function renderHome({ questions, onStartAL, onStartPractice, onStartReading, navigate }) {
+export function renderHome({ questions, onStartAL, onStartPractice, onStartReading, onStartFollowup, navigate }) {
   const root = document.createElement("section");
   root.className = "screen stack";
   const streak = getStreak();
@@ -16,12 +16,14 @@ export function renderHome({ questions, onStartAL, onStartPractice, onStartReadi
       <div class="metric"><span>同梱</span><strong>${questions.length}</strong><small>問</small></div>
     </div>
     <button class="primary-btn" type="button" data-action="al">練習をはじめる（Active Listening）</button>
+    <button class="secondary-btn" type="button" data-action="followup">質問ドリル（深掘り質問の型）</button>
     <button class="secondary-btn" type="button" data-action="practice">基礎練習（感情語）</button>
     <button class="secondary-btn" type="button" data-action="reading">読解モード（小説）</button>
     <button class="secondary-btn" type="button" data-action="review">復習する</button>
   `;
 
   root.querySelector("[data-action='al']").addEventListener("click", onStartAL);
+  root.querySelector("[data-action='followup']").addEventListener("click", onStartFollowup);
   root.querySelector("[data-action='practice']").addEventListener("click", onStartPractice);
   root.querySelector("[data-action='reading']").addEventListener("click", onStartReading);
   root.querySelector("[data-action='review']").addEventListener("click", () => navigate("review"));

@@ -20,9 +20,23 @@ export function renderStats({ questions }) {
     </div>
   `;
 
+  root.append(renderBars(stats, CATEGORY_ORDER, "感情ラベリング", ""));
+  root.append(renderBars(stats, FOLLOWUP_ORDER, "質問ドリル（型別）", "bars-wide"));
+  return root;
+}
+
+const FOLLOWUP_ORDER = ["詳細", "意見", "理由", "結果", "次の一手", "比較", "振り返り"];
+
+function renderBars(stats, order, title, extraClass) {
+  const section = document.createElement("section");
+  section.className = "stack";
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+  section.append(heading);
+
   const bars = document.createElement("div");
-  bars.className = "bars";
-  for (const category of CATEGORY_ORDER) {
+  bars.className = `bars ${extraClass}`.trim();
+  for (const category of order) {
     const item = stats.byCategory[category] ?? { total: 0, best: 0 };
     const rate = item.total ? item.best / item.total : 0;
     const row = document.createElement("div");
@@ -34,6 +48,6 @@ export function renderStats({ questions }) {
     `;
     bars.append(row);
   }
-  root.append(bars);
-  return root;
+  section.append(bars);
+  return section;
 }

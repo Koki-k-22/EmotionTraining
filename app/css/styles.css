@@ -428,3 +428,56 @@ input {
 .self-check li {
   font-size: 14px;
 }
+
+/* 質問ドリル（フォローアップ） */
+.followup-scene {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.followup-scene .utterance {
+  max-width: 92%;
+  align-self: flex-start;
+}
+
+.followup-phrase {
+  align-self: flex-end;
+  max-width: 92%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px 14px 4px 14px;
+  background: var(--surface-soft);
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--surface);
+  font-weight: 700;
+  text-align: left;
+}
+
+.choice-btn b {
+  min-width: 1.7em;
+  color: var(--primary);
+  font-weight: 900;
+}
+
+.bars-wide .bar-row {
+  grid-template-columns: 4.5rem 1fr 3rem;
+}

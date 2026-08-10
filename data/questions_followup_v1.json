@@ -1,0 +1,396 @@
+[
+  {
+    "id": "fu001",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 1,
+    "utterance": "最近、仕事がバタバタしてて",
+    "phrase": "バタバタって、具体的にはどんな感じなんですか？",
+    "answer": "1",
+    "explanation": "相手の曖昧な言葉「バタバタ」をそのまま拾って明確化を求める、詳細（具体化）の基本形。相手の言葉を使うと尋問感が出にくい。"
+  },
+  {
+    "id": "fu002",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 1,
+    "phrase": "もう少し詳しく聞かせてもらえますか？",
+    "answer": "1",
+    "explanation": "曖昧な部分全体の明確化を求める、詳細のアンカーフレーズ。どんな話題にも使える。"
+  },
+  {
+    "id": "fu003",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 2,
+    "utterance": "今の職場、ちょっと合わない気がしてて",
+    "phrase": "例えば、どういう場面でそう感じるんですか？",
+    "answer": "1",
+    "explanation": "「合わない」という抽象的な感覚を具体的な場面に落とす詳細（具体化）。真意（何が引っかかっているのか）へ近づく入り口になる。"
+  },
+  {
+    "id": "fu004",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 1,
+    "utterance": "新しい趣味を始めたんですよ",
+    "phrase": "何を始めたんですか？",
+    "answer": "1",
+    "explanation": "伏せられている中身を特定する詳細（具体化）。まず事実を明確にしてから、背景や理由の深掘りに進む。"
+  },
+  {
+    "id": "fu005",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 2,
+    "utterance": "あのお店、雰囲気が良くて",
+    "phrase": "雰囲気がいいって、どんな感じなんですか？",
+    "answer": "1",
+    "explanation": "相手の形容詞（雰囲気がいい）を掘る詳細（具体化）。相手が何を良いと感じるかという価値観も見えてくる。"
+  },
+  {
+    "id": "fu006",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 1,
+    "utterance": "休みの日はボルダリングをやってます",
+    "phrase": "いつから始めたんですか？",
+    "answer": "1",
+    "explanation": "経緯（いつ）を聞く詳細（背景）の質問。自分が詳しくない分野でも話を広げられるのが背景質問の強み。"
+  },
+  {
+    "id": "fu007",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 1,
+    "phrase": "きっかけは何だったんですか？",
+    "answer": "1",
+    "explanation": "詳細（背景）のアンカーフレーズ。過去の経緯・きっかけを聞くのは詳細（背景）、今の動機・魅力を聞くのは理由、という線引き。"
+  },
+  {
+    "id": "fu008",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 2,
+    "utterance": "平日は毎晩ランニングしてるんです",
+    "phrase": "どうやって時間を作ってるんですか？",
+    "answer": "1",
+    "explanation": "やり方・生活の工夫という事実を聞く詳細（背景）。相手の生活ぶりが見え、話が広がる。"
+  },
+  {
+    "id": "fu009",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 2,
+    "utterance": "最近、御朱印集めにハマってて",
+    "phrase": "それ、どこで知ったんですか？",
+    "answer": "1",
+    "explanation": "出会いの経緯を聞く詳細（背景）。「なぜハマったか（魅力）」を聞けば理由になる。"
+  },
+  {
+    "id": "fu010",
+    "kind": "followup",
+    "category": "詳細",
+    "difficulty": 3,
+    "utterance": "毎朝5時に起きて資格の勉強をしてるんです",
+    "phrase": "そのリズム、どうやって続けてるんですか？",
+    "answer": "1",
+    "explanation": "継続の方法（事実・工夫）を聞くので詳細（背景）。同じ話題でも「何のためにそこまで？」と聞けば理由になる。聞きたいものが事実なら詳細、動機なら理由。"
+  },
+  {
+    "id": "fu011",
+    "kind": "followup",
+    "category": "意見",
+    "difficulty": 1,
+    "phrase": "〜さん自身は、どう思ってるんですか？",
+    "answer": "2",
+    "explanation": "感想・意見のアンカーフレーズ。出来事の説明から、本人の評価・スタンスへ話を移す。"
+  },
+  {
+    "id": "fu012",
+    "kind": "followup",
+    "category": "意見",
+    "difficulty": 1,
+    "utterance": "会社が急にAI導入を進め始めて",
+    "phrase": "その流れ、正直どう感じてます？",
+    "answer": "2",
+    "explanation": "出来事への率直な評価を聞く意見質問。「正直」と添えると本音が出やすく、感情も現れやすい。"
+  },
+  {
+    "id": "fu013",
+    "kind": "followup",
+    "category": "意見",
+    "difficulty": 2,
+    "utterance": "上の子が留学したいって言い出して",
+    "phrase": "親としては、どう思われてるんですか？",
+    "answer": "2",
+    "explanation": "立場を指定して評価を聞く意見質問。応援と心配が混ざった本音が出やすい。"
+  },
+  {
+    "id": "fu014",
+    "kind": "followup",
+    "category": "意見",
+    "difficulty": 2,
+    "utterance": "新しいチームリーダー、かなり若い人なんですよ",
+    "phrase": "〜さん的には、それってアリなんですか？",
+    "answer": "2",
+    "explanation": "賛否を軽い言い方で聞く意見質問。事実の紹介で止まっている話から、本人の評価を引き出す。"
+  },
+  {
+    "id": "fu015",
+    "kind": "followup",
+    "category": "意見",
+    "difficulty": 2,
+    "utterance": "話題のあの映画、観てきました",
+    "phrase": "率直な感想、聞いてもいいですか？",
+    "answer": "2",
+    "explanation": "感想を求めるのは意見系の質問。「観てきた」という事実報告から評価へ進める。"
+  },
+  {
+    "id": "fu016",
+    "kind": "followup",
+    "category": "理由",
+    "difficulty": 1,
+    "utterance": "来月から転職するんです",
+    "phrase": "決め手は何だったんですか？",
+    "answer": "3",
+    "explanation": "選択の動機を聞く理由のアンカーフレーズ。決め手を語るとき、相手の価値観が言葉になる。"
+  },
+  {
+    "id": "fu017",
+    "kind": "followup",
+    "category": "理由",
+    "difficulty": 1,
+    "phrase": "一番の狙いは何なんですか？",
+    "answer": "3",
+    "explanation": "目的を聞く理由質問。行動の裏にある意図を引き出す。"
+  },
+  {
+    "id": "fu018",
+    "kind": "followup",
+    "category": "理由",
+    "difficulty": 2,
+    "utterance": "キャンプ、月2回は行ってますね",
+    "phrase": "キャンプの何がそんなに良いんですか？",
+    "answer": "3",
+    "explanation": "魅力＝今の動機を聞くので理由。「どうやって始めたか」と経緯を聞けば詳細（背景）になる。"
+  },
+  {
+    "id": "fu019",
+    "kind": "followup",
+    "category": "理由",
+    "difficulty": 3,
+    "utterance": "ジムを変えたんですよ",
+    "phrase": "何か理由があったんですか？",
+    "answer": "3",
+    "ok": ["1"],
+    "explanation": "変えた動機を聞くので理由。過去の経緯（何があったか）として聞けば詳細（背景）とも取れる境界例。会話ではどちらでもよく、ドリルでは動機寄りなら理由と判定。"
+  },
+  {
+    "id": "fu020",
+    "kind": "followup",
+    "category": "理由",
+    "difficulty": 2,
+    "utterance": "休日も仕事の勉強をしてるんです",
+    "phrase": "何のために、そこまでやるんですか？",
+    "answer": "3",
+    "explanation": "「何のため」は目的を聞く理由質問の典型。ただし言い方次第で詰問に聞こえるので、トーンには注意。"
+  },
+  {
+    "id": "fu021",
+    "kind": "followup",
+    "category": "結果",
+    "difficulty": 1,
+    "phrase": "それで、どうなったんですか？",
+    "answer": "4",
+    "explanation": "結果のアンカーフレーズ。相槌のように、相手の話の先を促す。"
+  },
+  {
+    "id": "fu022",
+    "kind": "followup",
+    "category": "結果",
+    "difficulty": 1,
+    "utterance": "思い切って部長に直談判したんです",
+    "phrase": "部長、何て言いました？",
+    "answer": "4",
+    "explanation": "行動の帰結を聞く結果質問。話のクライマックスを相手に語らせる。"
+  },
+  {
+    "id": "fu023",
+    "kind": "followup",
+    "category": "結果",
+    "difficulty": 2,
+    "utterance": "ダイエット、3ヶ月続いてます",
+    "phrase": "効果、出てきました？",
+    "answer": "4",
+    "explanation": "続けてきたことの影響（すでに起きたこと）を聞くので結果。「この先どうするか」を聞けば対策・次の一手になる。"
+  },
+  {
+    "id": "fu024",
+    "kind": "followup",
+    "category": "結果",
+    "difficulty": 2,
+    "utterance": "息子の部屋を勝手に掃除しちゃったんですよ",
+    "phrase": "息子さんの反応、どうでした？",
+    "answer": "4",
+    "explanation": "周りの反応を聞くのも結果系。出来事の波紋を語ってもらう。"
+  },
+  {
+    "id": "fu025",
+    "kind": "followup",
+    "category": "結果",
+    "difficulty": 1,
+    "utterance": "昨日、初めて自分でパンを焼いてみたんです",
+    "phrase": "それでそれで？うまく焼けました？",
+    "answer": "4",
+    "explanation": "続きを促す相槌型の結果質問。「それでそれで？」は最も軽い深掘り。"
+  },
+  {
+    "id": "fu026",
+    "kind": "followup",
+    "category": "次の一手",
+    "difficulty": 1,
+    "phrase": "次は、どうするんですか？",
+    "answer": "5",
+    "explanation": "対策・次の一手のアンカーフレーズ。まだ起きていない今後の計画を聞く。"
+  },
+  {
+    "id": "fu027",
+    "kind": "followup",
+    "category": "次の一手",
+    "difficulty": 2,
+    "utterance": "資格試験、落ちちゃいました",
+    "phrase": "また受けるんですか？",
+    "answer": "5",
+    "explanation": "今後の意向を聞く次の一手。すでに起きたこと（結果）ではなく、これからの話を向いている。"
+  },
+  {
+    "id": "fu028",
+    "kind": "followup",
+    "category": "次の一手",
+    "difficulty": 1,
+    "utterance": "マラソン、初完走できました",
+    "phrase": "次の目標って、もうあるんですか？",
+    "answer": "5",
+    "explanation": "次の目標＝未来の話なので次の一手。達成の余韻から次の楽しみへ話をつなぐ。"
+  },
+  {
+    "id": "fu029",
+    "kind": "followup",
+    "category": "次の一手",
+    "difficulty": 2,
+    "utterance": "今のプロジェクト、今月で終わるんです",
+    "phrase": "その後は、何をやる予定なんですか？",
+    "answer": "5",
+    "explanation": "この後の予定を聞く次の一手。区切りの話題は次の一手質問のチャンス。"
+  },
+  {
+    "id": "fu030",
+    "kind": "followup",
+    "category": "次の一手",
+    "difficulty": 2,
+    "utterance": "英会話を始めたんです",
+    "phrase": "他にも、やってみたいことあるんですか？",
+    "answer": "5",
+    "explanation": "「これ以外に何があるか」を聞くのも次の一手系。相手の挑戦リストを広げてもらう。"
+  },
+  {
+    "id": "fu031",
+    "kind": "followup",
+    "category": "比較",
+    "difficulty": 1,
+    "phrase": "今と昔で、何が違いますか？",
+    "answer": "6",
+    "explanation": "時間軸で違いを聞く比較のアンカーフレーズ。違いを言葉にする過程で、相手のこだわりが見える。"
+  },
+  {
+    "id": "fu032",
+    "kind": "followup",
+    "category": "比較",
+    "difficulty": 1,
+    "utterance": "転職して1年経ちました",
+    "phrase": "前の職場と一番違うところって、何ですか？",
+    "answer": "6",
+    "explanation": "新旧の対比を聞く比較質問。「一番」と絞ると答えやすく、価値観も出やすい。"
+  },
+  {
+    "id": "fu033",
+    "kind": "followup",
+    "category": "比較",
+    "difficulty": 2,
+    "utterance": "うちの部署、リモートやめて全員出社に戻ったんです",
+    "phrase": "リモートの頃と比べて、雰囲気変わりました？",
+    "answer": "6",
+    "explanation": "前後の比較を聞く質問。変化の話題は比較質問と相性がいい。"
+  },
+  {
+    "id": "fu034",
+    "kind": "followup",
+    "category": "比較",
+    "difficulty": 2,
+    "utterance": "子どもに空手を習わせてるんです",
+    "phrase": "他の習い事も検討したんですか？",
+    "answer": "6",
+    "explanation": "他の選択肢との対比を促す比較質問。「なぜ空手か」という理由の話にも自然につながる。"
+  },
+  {
+    "id": "fu035",
+    "kind": "followup",
+    "category": "比較",
+    "difficulty": 2,
+    "utterance": "iPhoneからAndroidに乗り換えたんです",
+    "phrase": "使い勝手、だいぶ違います？",
+    "answer": "6",
+    "explanation": "新旧の違いを聞く比較質問。乗り換え・引っ越し・転職など「変えた」話題の定番。"
+  },
+  {
+    "id": "fu036",
+    "kind": "followup",
+    "category": "振り返り",
+    "difficulty": 1,
+    "phrase": "今振り返ってみて、どうですか？",
+    "answer": "7",
+    "explanation": "振り返りのアンカーフレーズ。過去の出来事を今の視点で意味づけしてもらう。"
+  },
+  {
+    "id": "fu037",
+    "kind": "followup",
+    "category": "振り返り",
+    "difficulty": 1,
+    "utterance": "起業して5年になります",
+    "phrase": "当時の自分にアドバイスするとしたら、何かあります？",
+    "answer": "7",
+    "explanation": "振り返りの定番フレーズ。経験から得た学びが言葉になり、話に深みが出る。"
+  },
+  {
+    "id": "fu038",
+    "kind": "followup",
+    "category": "振り返り",
+    "difficulty": 2,
+    "utterance": "家を買って3年経ちました",
+    "phrase": "もう一度選び直せるなら、何か変えます？",
+    "answer": "7",
+    "explanation": "やり直しを仮定する振り返り質問。満足も後悔も、本音の評価が出やすい。"
+  },
+  {
+    "id": "fu039",
+    "kind": "followup",
+    "category": "振り返り",
+    "difficulty": 3,
+    "utterance": "部活の顧問を10年やってきました",
+    "phrase": "10年やってきて、一番の転機っていつでした？",
+    "answer": "7",
+    "ok": ["1"],
+    "explanation": "過去を意味づけて選び直させるので振り返り。単なる経緯の確認より一歩深いが、事実を聞く詳細（背景）とも取れる境界例。"
+  },
+  {
+    "id": "fu040",
+    "kind": "followup",
+    "category": "振り返り",
+    "difficulty": 2,
+    "utterance": "子育てがようやく一段落したんです",
+    "phrase": "今だから言える「こうすればよかった」って、あります？",
+    "answer": "7",
+    "explanation": "再解釈を促す振り返り質問。渦中では言えなかった本音を、安全に話してもらえる。"
+  }
+]

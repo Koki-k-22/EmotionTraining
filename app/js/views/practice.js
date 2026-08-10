@@ -1,5 +1,6 @@
-import { gradeAnswer, gradeAnswerAL, isDeepQuestion } from "../grading.js";
+import { gradeAnswer, gradeAnswerAL, gradeFollowup, isDeepQuestion, isFollowupQuestion } from "../grading.js";
 import { getRecords, recordAttempt } from "../store.js";
+import { renderFollowupAnswer, renderFollowupQuestion } from "./followup.js";
 
 const RESULT_LABELS = {
   best: "◎",
@@ -25,6 +26,14 @@ const RESULT_TEXT_AL = {
   unknown: "自己採点",
 };
 
+const RESULT_TEXT_FOLLOWUP = {
+  best: "正解",
+  ok: "惜しい",
+  poor: "少しズレ",
+  miss: "もう一度",
+  unknown: "自己採点",
+};
+
 const SELF_CHECKLIST_AL = [
   "相手の使った感情語の言い換えではなく、その裏の気持ちを言葉にした（深さ）",
   "その推測は発話・状況に根拠がある（的確さ）",
@@ -35,6 +44,7 @@ const SESSION_TITLES = {
   al: "Active Listening",
   practice: "基礎練習",
   reading: "読解モード",
+  followup: "質問ドリル",
   review: "復習",
 };
 
@@ -155,12 +165,13 @@ function renderSummary(session, callbacks) {
   const title = SESSION_TITLES[session.kind] ?? "練習";
   root.append(el("p", { class: "eyebrow", text: `${title}完了` }));
   root.append(el("h1", { text: "結果サマリ" }));
+  const summaryText = session.kind === "followup" ? RESULT_TEXT_FOLLOWUP : RESULT_TEXT;
   const grid = el("div", { class: "summary-grid" });
   for (const key of ["best", "ok", "poor", "miss"]) {
     grid.append(el("div", { class: "metric" }, [
       el("span", { text: RESULT_LABELS[key] }),
       el("strong", { text: String(session.summary[key] ?? 0) }),
-      el("small", { text: RESULT_TEXT[key] }),
+      el("small", { text: summaryText[key] }),
     ]));
   }
   root.append(grid);
@@ -312,7 +323,11 @@ export function renderPracticeSession({ questions, session, onUpdate, onFinish }
 
   const callbacks = {
     submit(input) {
-      const autoGrade = isDeepQuestion(q) ? gradeAnswerAL(input, q) : gradeAnswer(input, q);
+      const autoGrade = isFollowupQuestion(q)
+        ? gradeFollowup(input, q)
+        : isDeepQuestion(q)
+          ? gradeAnswerAL(input, q)
+          : gradeAnswer(input, q);
       const next = { ...session, input, autoGrade, finalResult: null, phase: "answer" };
       if (autoGrade.result !== "unknown") {
         recordAttempt(q.id, input, autoGrade.result);
@@ -349,8 +364,12 @@ export function renderPracticeSession({ questions, session, onUpdate, onFinish }
   };
 
   if (session.phase === "answer") {
-    return renderAnswer(q, session, callbacks);
+    return isFollowupQuestion(q)
+      ? renderFollowupAnswer(q, session, callbacks)
+      : renderAnswer(q, session, callbacks);
   }
 
-  return renderQuestion(q, session, callbacks);
+  return isFollowupQuestion(q)
+    ? renderFollowupQuestion(q, session, callbacks)
+    : renderQuestion(q, session, callbacks);
 }

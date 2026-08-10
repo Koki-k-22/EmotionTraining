@@ -87,3 +87,32 @@ test("isDeepQuestion は deep.best の有無で判定する", () => {
   assert.equal(isDeepQuestion(alQuestion), true);
   assert.equal(isDeepQuestion(question), false);
 });
+
+import { gradeFollowup, isFollowupQuestion } from "../app/js/grading.js";
+
+const fuQuestion = { kind: "followup", answer: "3", ok: ["1"] };
+
+test("followup: 正解の型を best と判定する", () => {
+  assert.deepEqual(gradeFollowup("3", fuQuestion), { result: "best", matched: "3" });
+});
+
+test("followup: 許容の型は ok と判定する", () => {
+  assert.equal(gradeFollowup("1", fuQuestion).result, "ok");
+});
+
+test("followup: それ以外の型は miss と判定する", () => {
+  assert.equal(gradeFollowup("4", fuQuestion).result, "miss");
+});
+
+test("followup: ok 未定義でも miss を返す", () => {
+  assert.equal(gradeFollowup("1", { kind: "followup", answer: "3" }).result, "miss");
+});
+
+test("followup: 空の選択は unknown", () => {
+  assert.equal(gradeFollowup("", fuQuestion).result, "unknown");
+});
+
+test("isFollowupQuestion は kind で判定する", () => {
+  assert.equal(isFollowupQuestion(fuQuestion), true);
+  assert.equal(isFollowupQuestion(alQuestion), false);
+});

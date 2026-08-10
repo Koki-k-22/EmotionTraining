@@ -7,16 +7,18 @@ async function loadJson(path, label) {
 }
 
 export async function loadQuestionSets() {
-  const [al, practice, reading] = await Promise.all([
+  const [al, practice, reading, followup] = await Promise.all([
     loadJson("./data/questions_al_v1.json", "Active Listening問題データ"),
     loadJson("./data/questions_car_v1.json", "創作問題データ"),
     loadJson("./data/questions_novel_v1.json", "読解問題データ"),
+    loadJson("./data/questions_followup_v1.json", "質問ドリルデータ"),
   ]);
   return {
     al,
     practice,
     reading,
-    all: [...al, ...practice, ...reading],
+    followup,
+    all: [...al, ...practice, ...reading, ...followup],
   };
 }
 
