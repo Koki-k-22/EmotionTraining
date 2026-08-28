@@ -1,16 +1,18 @@
 import { loadAppData } from "./data.js";
-import { createPracticeSession, renderPracticeSession } from "./views/practice.js";
+import { createKnockSession, createPracticeSession, renderPracticeSession } from "./views/practice.js";
 import { renderHome } from "./views/home.js";
 import { renderReview } from "./views/review.js";
 import { renderDictionary } from "./views/dictionary.js";
 import { renderStats } from "./views/stats.js";
 
-const ROUTES = new Set(["home", "al", "practice", "reading", "followup", "review", "dictionary", "stats"]);
+const ROUTES = new Set(["home", "al", "practice", "reading", "followup", "knock", "review", "dictionary", "stats"]);
+const SESSION_ROUTES = new Set(["al", "practice", "reading", "followup", "knock"]);
+const KNOCK_DEFAULT_COUNT = 100;
 
 const state = {
   route: getRoute(),
   questions: [],
-  questionSets: { al: [], practice: [], reading: [], followup: [] },
+  questionSets: { al: [], practice: [], reading: [], followup: [], knock: [] },
   lexicon: null,
   practiceSession: null,
   reviewSession: null,
@@ -48,27 +50,16 @@ function finishSession() {
   render();
 }
 
-function startAL() {
-  state.practiceSession = createPracticeSession(state.questionSets.al, 10, "al");
-  navigate("al");
-  render();
+function createSessionFor(kind, count = 10) {
+  if (kind === "knock") {
+    return createKnockSession(state.questionSets.knock, count);
+  }
+  return createPracticeSession(state.questionSets[kind], count, kind);
 }
 
-function startPractice() {
-  state.practiceSession = createPracticeSession(state.questionSets.practice, 10, "practice");
-  navigate("practice");
-  render();
-}
-
-function startReading() {
-  state.practiceSession = createPracticeSession(state.questionSets.reading, 10, "reading");
-  navigate("reading");
-  render();
-}
-
-function startFollowup() {
-  state.practiceSession = createPracticeSession(state.questionSets.followup, 10, "followup");
-  navigate("followup");
+function startSession(kind, count) {
+  state.practiceSession = createSessionFor(kind, count);
+  navigate(kind);
   render();
 }
 
@@ -90,45 +81,10 @@ function renderView() {
   if (state.error) return renderError(state.error);
   if (!state.questions.length || !state.lexicon) return renderLoading();
 
-  if (state.route === "al") {
-    if (!state.practiceSession || state.practiceSession.kind !== "al") {
-      state.practiceSession = createPracticeSession(state.questionSets.al, 10, "al");
-    }
-    return renderPracticeSession({
-      questions: state.questions,
-      session: state.practiceSession,
-      onUpdate: setPracticeSession,
-      onFinish: finishSession,
-    });
-  }
-
-  if (state.route === "practice") {
-    if (!state.practiceSession || state.practiceSession.kind !== "practice") {
-      state.practiceSession = createPracticeSession(state.questionSets.practice, 10, "practice");
-    }
-    return renderPracticeSession({
-      questions: state.questions,
-      session: state.practiceSession,
-      onUpdate: setPracticeSession,
-      onFinish: finishSession,
-    });
-  }
-
-  if (state.route === "reading") {
-    if (!state.practiceSession || state.practiceSession.kind !== "reading") {
-      state.practiceSession = createPracticeSession(state.questionSets.reading, 10, "reading");
-    }
-    return renderPracticeSession({
-      questions: state.questions,
-      session: state.practiceSession,
-      onUpdate: setPracticeSession,
-      onFinish: finishSession,
-    });
-  }
-
-  if (state.route === "followup") {
-    if (!state.practiceSession || state.practiceSession.kind !== "followup") {
-      state.practiceSession = createPracticeSession(state.questionSets.followup, 10, "followup");
+  if (SESSION_ROUTES.has(state.route)) {
+    const kind = state.route;
+    if (!state.practiceSession || state.practiceSession.kind !== kind) {
+      state.practiceSession = createSessionFor(kind, kind === "knock" ? KNOCK_DEFAULT_COUNT : 10);
     }
     return renderPracticeSession({
       questions: state.questions,
@@ -157,10 +113,11 @@ function renderView() {
 
   return renderHome({
     questions: state.questions,
-    onStartAL: startAL,
-    onStartPractice: startPractice,
-    onStartReading: startReading,
-    onStartFollowup: startFollowup,
+    onStartAL: () => startSession("al"),
+    onStartPractice: () => startSession("practice"),
+    onStartReading: () => startSession("reading"),
+    onStartFollowup: () => startSession("followup"),
+    onStartKnock: (count = KNOCK_DEFAULT_COUNT) => startSession("knock", count),
     navigate,
   });
 }

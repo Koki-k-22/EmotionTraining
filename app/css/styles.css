@@ -481,3 +481,96 @@ input {
 .bars-wide .bar-row {
   grid-template-columns: 4.5rem 1fr 3rem;
 }
+
+/* 100本ノック（質問生成） */
+.knock-scene {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.topic-chip {
+  margin: 0;
+  align-self: flex-start;
+  padding: 2px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.persona-line {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.knock-answer {
+  max-width: 100%;
+  font-weight: 500;
+  white-space: pre-wrap;
+}
+
+.type-card {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.type-card .field-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.type-card .hint,
+.type-card details {
+  margin: 0;
+}
+
+.type-card details {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+}
+
+.type-name {
+  margin: 0;
+  font-size: 20px;
+}
+
+.type-name strong {
+  color: var(--primary);
+}
+
+textarea {
+  min-height: 96px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  color: var(--text);
+  background: var(--surface);
+  font: inherit;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.model-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.model-list b {
+  color: var(--primary);
+}

@@ -1,6 +1,8 @@
-import { gradeAnswer, gradeAnswerAL, gradeFollowup, isDeepQuestion, isFollowupQuestion } from "../grading.js";
+import { gradeAnswer, gradeAnswerAL, gradeFollowup, gradeKnock, isDeepQuestion, isFollowupQuestion, isKnockQuestion } from "../grading.js";
 import { getRecords, recordAttempt } from "../store.js";
 import { renderFollowupAnswer, renderFollowupQuestion } from "./followup.js";
+import { renderKnockAnswer, renderKnockQuestion } from "./knock.js";
+import { buildKnockSessionIds } from "../knock.js";
 
 const RESULT_LABELS = {
   best: "◎",
@@ -34,6 +36,14 @@ const RESULT_TEXT_FOLLOWUP = {
   unknown: "自己採点",
 };
 
+const RESULT_TEXT_KNOCK = {
+  best: "型どおり",
+  ok: "惜しい",
+  poor: "少しズレ",
+  miss: "ズレた",
+  unknown: "自己採点",
+};
+
 const SELF_CHECKLIST_AL = [
   "相手の使った感情語の言い換えではなく、その裏の気持ちを言葉にした（深さ）",
   "その推測は発話・状況に根拠がある（的確さ）",
@@ -45,6 +55,7 @@ const SESSION_TITLES = {
   practice: "基礎練習",
   reading: "読解モード",
   followup: "質問ドリル",
+  knock: "100本ノック",
   review: "復習",
 };
 
@@ -87,6 +98,19 @@ export function createReviewSession(questions, ids) {
   return {
     kind: "review",
     ids: shuffle(validIds),
+    index: 0,
+    phase: "question",
+    input: "",
+    autoGrade: null,
+    finalResult: null,
+    summary: { best: 0, ok: 0, poor: 0, miss: 0 },
+  };
+}
+
+export function createKnockSession(items, count = 100) {
+  return {
+    kind: "knock",
+    ids: buildKnockSessionIds(items, count, getRecords()),
     index: 0,
     phase: "question",
     input: "",
@@ -165,7 +189,11 @@ function renderSummary(session, callbacks) {
   const title = SESSION_TITLES[session.kind] ?? "練習";
   root.append(el("p", { class: "eyebrow", text: `${title}完了` }));
   root.append(el("h1", { text: "結果サマリ" }));
-  const summaryText = session.kind === "followup" ? RESULT_TEXT_FOLLOWUP : RESULT_TEXT;
+  const summaryText = session.kind === "followup"
+    ? RESULT_TEXT_FOLLOWUP
+    : session.kind === "knock"
+      ? RESULT_TEXT_KNOCK
+      : RESULT_TEXT;
   const grid = el("div", { class: "summary-grid" });
   for (const key of ["best", "ok", "poor", "miss"]) {
     grid.append(el("div", { class: "metric" }, [
@@ -323,11 +351,13 @@ export function renderPracticeSession({ questions, session, onUpdate, onFinish }
 
   const callbacks = {
     submit(input) {
-      const autoGrade = isFollowupQuestion(q)
-        ? gradeFollowup(input, q)
-        : isDeepQuestion(q)
-          ? gradeAnswerAL(input, q)
-          : gradeAnswer(input, q);
+      const autoGrade = isKnockQuestion(q)
+        ? gradeKnock(input, q)
+        : isFollowupQuestion(q)
+          ? gradeFollowup(input, q)
+          : isDeepQuestion(q)
+            ? gradeAnswerAL(input, q)
+            : gradeAnswer(input, q);
       const next = { ...session, input, autoGrade, finalResult: null, phase: "answer" };
       if (autoGrade.result !== "unknown") {
         recordAttempt(q.id, input, autoGrade.result);
@@ -364,11 +394,13 @@ export function renderPracticeSession({ questions, session, onUpdate, onFinish }
   };
 
   if (session.phase === "answer") {
+    if (isKnockQuestion(q)) return renderKnockAnswer(q, session, callbacks);
     return isFollowupQuestion(q)
       ? renderFollowupAnswer(q, session, callbacks)
       : renderAnswer(q, session, callbacks);
   }
 
+  if (isKnockQuestion(q)) return renderKnockQuestion(q, session, callbacks);
   return isFollowupQuestion(q)
     ? renderFollowupQuestion(q, session, callbacks)
     : renderQuestion(q, session, callbacks);

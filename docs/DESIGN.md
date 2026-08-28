@@ -10,6 +10,10 @@ v1.1(2026-07-03)で出題を2系統に、v1.2(2026-07-11)で3系統に拡張し�
 - **基礎練習**: 創作CAR問題 `questions_car_v1.json`(64問、docs/AUTHORING.md 準拠、
   ブラインドテスト全問合格。2026-07-11 に car020 の時点ズレを修正)。ルートは `#practice`
 - **読解モード**: 青空文庫由来 `questions_novel_v1.json`(ブラインドテスト合格の45問)
+- **100本ノック（質問生成）**: `questions_knock_v1.json`（10ペルソナ×5話題=50回答文、各回答文に
+  8型の模範質問。docs/AUTHORING_KNOCK.md 準拠）。`app/js/knock.js` の `expandKnock` で
+  (回答文×型)=400 の仮想問題に展開し、`buildKnockSessionIds` が1セッション100問（各回答文2型）を組む。
+  自由記述→模範解答→自己採点。ルートは `#knock`。2026-08-28 追加
 - 復習・成績は全モードの記録を questionId ベースで合算
 - SW キャッシュは et-v3
 - AL問題の採点は `gradeAnswerAL`(grading.js): deep.best のキーワード群
