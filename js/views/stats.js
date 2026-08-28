@@ -1,6 +1,9 @@
 import { getStats } from "../store.js";
+import { KNOCK_TYPES, KNOCK_TYPE_ORDER } from "../knock.js";
 
 const CATEGORY_ORDER = ["喜", "怒", "哀", "怖", "恥", "好", "厭", "昂", "安", "驚"];
+const FOLLOWUP_ORDER = ["詳細", "意見", "理由", "結果", "次の一手", "比較", "振り返り"];
+const KNOCK_ORDER = KNOCK_TYPE_ORDER.map((key) => KNOCK_TYPES[key].short);
 
 function percent(value) {
   return `${Math.round(value * 100)}%`;
@@ -20,12 +23,16 @@ export function renderStats({ questions }) {
     </div>
   `;
 
-  root.append(renderBars(stats, CATEGORY_ORDER, "感情ラベリング", ""));
-  root.append(renderBars(stats, FOLLOWUP_ORDER, "質問ドリル（型別）", "bars-wide"));
+  // 型別集計はモードごとに分ける（「意見」「理由」などのカテゴリ名が質問ドリルとノックで重なるため）
+  const emotionStats = getStats(questions.filter((q) => q.kind !== "followup" && q.kind !== "knock"));
+  const followupStats = getStats(questions.filter((q) => q.kind === "followup"));
+  const knockStats = getStats(questions.filter((q) => q.kind === "knock"));
+
+  root.append(renderBars(emotionStats, CATEGORY_ORDER, "感情ラベリング", ""));
+  root.append(renderBars(followupStats, FOLLOWUP_ORDER, "質問ドリル（型別）", "bars-wide"));
+  root.append(renderBars(knockStats, KNOCK_ORDER, "100本ノック（型別）", "bars-wide"));
   return root;
 }
-
-const FOLLOWUP_ORDER = ["詳細", "意見", "理由", "結果", "次の一手", "比較", "振り返り"];
 
 function renderBars(stats, order, title, extraClass) {
   const section = document.createElement("section");

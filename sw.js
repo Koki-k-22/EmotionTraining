@@ -1,4 +1,4 @@
-const CACHE_NAME = "et-v5";
+const CACHE_NAME = "et-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,10 +7,12 @@ const ASSETS = [
   "./js/app.js",
   "./js/data.js",
   "./js/grading.js",
+  "./js/knock.js",
   "./js/store.js",
   "./js/views/home.js",
   "./js/views/practice.js",
   "./js/views/followup.js",
+  "./js/views/knock.js",
   "./js/views/review.js",
   "./js/views/dictionary.js",
   "./js/views/stats.js",
@@ -18,6 +20,7 @@ const ASSETS = [
   "./data/questions_car_v1.json",
   "./data/questions_novel_v1.json",
   "./data/questions_followup_v1.json",
+  "./data/questions_knock_v1.json",
   "./data/emotion_lexicon.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",

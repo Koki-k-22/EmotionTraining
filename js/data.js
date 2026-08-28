@@ -1,3 +1,5 @@
+import { expandKnock } from "./knock.js";
+
 async function loadJson(path, label) {
   const response = await fetch(path);
   if (!response.ok) {
@@ -7,18 +9,21 @@ async function loadJson(path, label) {
 }
 
 export async function loadQuestionSets() {
-  const [al, practice, reading, followup] = await Promise.all([
+  const [al, practice, reading, followup, knockMaster] = await Promise.all([
     loadJson("./data/questions_al_v1.json", "Active Listening問題データ"),
     loadJson("./data/questions_car_v1.json", "創作問題データ"),
     loadJson("./data/questions_novel_v1.json", "読解問題データ"),
     loadJson("./data/questions_followup_v1.json", "質問ドリルデータ"),
+    loadJson("./data/questions_knock_v1.json", "100本ノックデータ"),
   ]);
+  const knock = expandKnock(knockMaster);
   return {
     al,
     practice,
     reading,
     followup,
-    all: [...al, ...practice, ...reading, ...followup],
+    knock,
+    all: [...al, ...practice, ...reading, ...followup, ...knock],
   };
 }
 
