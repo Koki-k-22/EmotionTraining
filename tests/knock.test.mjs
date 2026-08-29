@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 import { KNOCK_TYPE_ORDER, buildKnockSessionIds, expandKnock } from "../app/js/knock.js";
-import { detectKnockTypes, gradeKnock, isKnockQuestion } from "../app/js/grading.js";
+import { gradeKnock, isKnockQuestion } from "../app/js/grading.js";
 
 const masterPath = new URL("../data/questions_knock_v1.json", import.meta.url);
 const appPath = new URL("../app/data/questions_knock_v1.json", import.meta.url);
@@ -84,29 +84,7 @@ test("buildKnockSessionIds: 10問でも組める", () => {
   assert.equal(new Set(ids.map((id) => id.slice(0, id.lastIndexOf("_")))).size, 10);
 });
 
-test("detectKnockTypes: 代表的なフレーズで型が検出できる", () => {
-  assert.ok(detectKnockTypes("具体的には、どういうことですか？").includes("1a"));
-  assert.ok(detectKnockTypes("きっかけは何だったんですか？").includes("1b"));
-  assert.ok(detectKnockTypes("それについては、どう思ってますか？").includes("2"));
-  assert.ok(detectKnockTypes("それを選んだ決め手は何だったんですか？").includes("3"));
-  assert.ok(detectKnockTypes("それで、どうなったんですか？").includes("4"));
-  assert.ok(detectKnockTypes("次は、どうするんですか？").includes("5"));
-  assert.ok(detectKnockTypes("他のと比べて、どうなんですか？").includes("6"));
-  assert.ok(detectKnockTypes("今振り返ってみて、どうですか？").includes("7"));
-});
-
-test("detectKnockTypes: 模範解答の大半は自分の型を検出できる", () => {
-  const hits = items.filter((q) => detectKnockTypes(q.model.phrase).includes(q.type));
-  assert.ok(hits.length >= items.length * 0.85, `${hits.length}/${items.length}`);
-});
-
-test("detectKnockTypes: 空文字は空配列", () => {
-  assert.deepEqual(detectKnockTypes("  "), []);
-});
-
-test("gradeKnock: 自動採点せず unknown(自己採点)を返し、検出した型を matched に入れる", () => {
-  const graded = gradeKnock("それで、どうなったんですか？");
-  assert.equal(graded.result, "unknown");
-  assert.ok(graded.matched.includes("4"));
-  assert.deepEqual(gradeKnock(""), { result: "unknown", matched: null });
+test("gradeKnock: 自動採点せず常に unknown(自己採点)を返す", () => {
+  assert.deepEqual(gradeKnock(), { result: "unknown", matched: null });
+  assert.deepEqual(gradeKnock("それで、どうなったんですか？"), { result: "unknown", matched: null });
 });

@@ -2,7 +2,6 @@ import { KNOCK_CHECKLIST, KNOCK_TYPES, KNOCK_TYPE_ORDER } from "../knock.js";
 
 const RESULT_LABELS = { best: "◎", ok: "○", miss: "×" };
 const RESULT_TEXT = { best: "型どおり", ok: "惜しい", miss: "ズレた" };
-const SKIP_INPUT = "わからない";
 
 function el(tag, options = {}, children = []) {
   const node = document.createElement(tag);
@@ -50,64 +49,19 @@ function renderTypeCard(q, { withAnchor = false } = {}) {
   return card;
 }
 
+// フラッシュカード形式: 質問は頭の中で作り（入力しない）、「答えを見る」で模範を開いて自己採点する
 export function renderKnockQuestion(q, session, callbacks) {
   const root = el("section", { class: "screen stack" });
   root.append(el("p", { class: "eyebrow", text: `${session.index + 1} / ${session.ids.length}` }));
   root.append(el("h1", { text: sessionTitle(session) }));
   root.append(renderScene(q));
   root.append(renderTypeCard(q, { withAnchor: true }));
+  root.append(el("p", { class: "field-label", text: "この回答に対して、上の型で質問するなら？ 頭の中で（できれば声に出して）作ってから、答えを見る" }));
 
-  const form = el("form", { class: "answer-form" });
-  const label = el("label", {
-    class: "field-label",
-    for: "answer-input",
-    text: "この回答に対して、上の型で質問を作るなら？",
-  });
-  const input = el("textarea", {
-    id: "answer-input",
-    name: "answer",
-    rows: "3",
-    autocomplete: "off",
-    placeholder: "例: きっかけは何だったんですか？",
-  });
-  input.value = session.input;
-  const actions = el("div", { class: "button-row" }, [
-    el("button", { class: "primary-btn", type: "submit", text: "模範と比べる" }),
-    el("button", { class: "secondary-btn", type: "button", text: "わからない" }),
-  ]);
-  form.append(label, input, actions);
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (!input.value.trim()) {
-      input.focus();
-      return;
-    }
-    callbacks.submit(input.value);
-  });
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
-      event.preventDefault();
-      form.requestSubmit();
-    }
-  });
-  actions.querySelector(".secondary-btn").addEventListener("click", () => callbacks.skip());
-  root.append(form);
+  const reveal = el("button", { class: "primary-btn", type: "button", text: "答えを見る" });
+  reveal.addEventListener("click", () => callbacks.submit(""));
+  root.append(reveal);
   return root;
-}
-
-function detectionHint(q, session) {
-  if (!session.input || session.input === SKIP_INPUT) return null;
-  const detected = Array.isArray(session.autoGrade?.matched) ? session.autoGrade.matched : [];
-  if (detected.includes(q.type)) {
-    const others = detected.filter((key) => key !== q.type);
-    return others.length
-      ? `キーワードからは指定の型の要素が入っていそうです（${others.map((k) => KNOCK_TYPES[k]?.short ?? k).join("・")}の要素も混ざっています）。`
-      : "キーワードからは、指定の型の要素が入っていそうです。";
-  }
-  if (detected.length) {
-    return `キーワードからは「${detected.map((k) => KNOCK_TYPES[k]?.short ?? k).join("・")}」の型に見えます。指定の型とズレていないか、模範と見比べてください。`;
-  }
-  return "キーワードでは型を判定できませんでした。模範と見比べて自己採点してください。";
 }
 
 export function renderKnockAnswer(q, session, callbacks) {
@@ -128,17 +82,6 @@ export function renderKnockAnswer(q, session, callbacks) {
   root.append(renderScene(q));
   root.append(renderTypeCard(q));
 
-  const yours = el("section", { class: "answer-group" });
-  yours.append(el("h3", { text: "あなたの質問" }));
-  if (session.input && session.input !== SKIP_INPUT) {
-    yours.append(el("p", { class: "followup-phrase", text: `「${session.input}」` }));
-  } else {
-    yours.append(el("p", { class: "hint", text: "（今回はスキップ）" }));
-  }
-  const hint = detectionHint(q, session);
-  if (hint) yours.append(el("p", { class: "hint", text: hint }));
-  root.append(yours);
-
   const model = el("section", { class: "answer-group" });
   model.append(el("h3", { text: "模範解答（一例）" }));
   model.append(el("p", { class: "model-reply", text: `「${q.model?.phrase ?? ""}」` }));
@@ -151,7 +94,7 @@ export function renderKnockAnswer(q, session, callbacks) {
     const list = el("ul", { class: "clean-list" });
     for (const item of KNOCK_CHECKLIST) list.append(el("li", { text: item }));
     check.append(list);
-    check.append(el("p", { class: "hint", text: "◎ 型どおりで自然 / ○ 型は合うが言い方が硬い・ズレ気味 / × 別の型になっている" }));
+    check.append(el("p", { class: "hint", text: "◎ 型どおりの質問が自然に出た / ○ 型は合うが硬い・迷った / × 別の型になった・出てこなかった" }));
     root.append(check);
 
     const self = el("div", { class: "button-row three" }, [
