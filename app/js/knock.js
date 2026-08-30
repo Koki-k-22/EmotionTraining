@@ -71,6 +71,7 @@ export const KNOCK_CHECKLIST = [
 /**
  * マスターデータ（{ topics, personas, items }）を、(回答文 × 型) の仮想問題に展開する。
  * 1回答文につき8問、50回答文で400問。id は `${item.id}_${type}`。
+ * 各問題は指定の型の模範解答3例（models）と、他の型の模範（allQuestions）を持つ。
  */
 export function expandKnock(master) {
   const topics = master?.topics ?? {};
@@ -88,8 +89,8 @@ export function expandKnock(master) {
         topicLabel: topics[item.topic] ?? "",
         persona: personas[item.persona] ?? { name: "", profile: "" },
         answer: item.answer,
-        model: item.questions[type],
-        models: item.questions,
+        models: item.questions[type],
+        allQuestions: item.questions,
       })),
   );
 }

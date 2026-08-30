@@ -26,9 +26,15 @@ test("knock データ: 5話題×10ペルソナ=50本、各回答文に8型の模
     assert.deepEqual(Object.keys(item.questions).sort(), [...KNOCK_TYPE_ORDER].sort(), item.id);
     assert.ok(master.topics[item.topic], `${item.id}: topic`);
     assert.ok(master.personas[item.persona], `${item.id}: persona`);
+    const phrases = new Set();
     for (const key of KNOCK_TYPE_ORDER) {
-      assert.ok(item.questions[key].phrase.trim(), `${item.id}/${key}: phrase`);
-      assert.ok(item.questions[key].why.trim(), `${item.id}/${key}: why`);
+      assert.equal(item.questions[key].length, 3, `${item.id}/${key}: 3 variants`);
+      for (const variant of item.questions[key]) {
+        assert.ok(variant.phrase.trim(), `${item.id}/${key}: phrase`);
+        assert.ok(variant.why.trim(), `${item.id}/${key}: why`);
+        assert.ok(!phrases.has(variant.phrase), `${item.id}: dup ${variant.phrase}`);
+        phrases.add(variant.phrase);
+      }
     }
   }
   const perTopic = {};
@@ -49,7 +55,9 @@ test("expandKnock: 400問に展開され id が一意、kind/category が付く"
   assert.equal(first.category, "具体化");
   assert.equal(first.topicLabel, "最近ハマっていること");
   assert.equal(first.persona.name, "田中 美咲");
-  assert.equal(first.model.phrase, master.items[0].questions["1a"].phrase);
+  assert.equal(first.models.length, 3);
+  assert.equal(first.models[0].phrase, master.items[0].questions["1a"][0].phrase);
+  assert.equal(first.allQuestions["7"].length, 3);
   assert.ok(isKnockQuestion(first));
 });
 

@@ -1,5 +1,5 @@
 import { gradeAnswer, gradeAnswerAL, gradeFollowup, gradeKnock, isDeepQuestion, isFollowupQuestion, isKnockQuestion } from "../grading.js";
-import { getRecords, recordAttempt } from "../store.js";
+import { getRecords, recordAttempt, touchStreak } from "../store.js";
 import { renderFollowupAnswer, renderFollowupQuestion } from "./followup.js";
 import { renderKnockAnswer, renderKnockQuestion } from "./knock.js";
 import { buildKnockSessionIds } from "../knock.js";
@@ -36,13 +36,6 @@ const RESULT_TEXT_FOLLOWUP = {
   unknown: "自己採点",
 };
 
-const RESULT_TEXT_KNOCK = {
-  best: "型どおり",
-  ok: "惜しい",
-  poor: "少しズレ",
-  miss: "ズレた",
-  unknown: "自己採点",
-};
 
 const SELF_CHECKLIST_AL = [
   "相手の使った感情語の言い換えではなく、その裏の気持ちを言葉にした（深さ）",
@@ -189,20 +182,26 @@ function renderSummary(session, callbacks) {
   const title = SESSION_TITLES[session.kind] ?? "練習";
   root.append(el("p", { class: "eyebrow", text: `${title}完了` }));
   root.append(el("h1", { text: "結果サマリ" }));
-  const summaryText = session.kind === "followup"
-    ? RESULT_TEXT_FOLLOWUP
-    : session.kind === "knock"
-      ? RESULT_TEXT_KNOCK
-      : RESULT_TEXT;
-  const grid = el("div", { class: "summary-grid" });
-  for (const key of ["best", "ok", "poor", "miss"]) {
-    grid.append(el("div", { class: "metric" }, [
-      el("span", { text: RESULT_LABELS[key] }),
-      el("strong", { text: String(session.summary[key] ?? 0) }),
-      el("small", { text: summaryText[key] }),
+  if (session.kind === "knock") {
+    root.append(el("div", { class: "summary-grid" }, [
+      el("div", { class: "metric" }, [
+        el("span", { text: "ノック" }),
+        el("strong", { text: String(session.ids.length) }),
+        el("small", { text: "本 完了" }),
+      ]),
     ]));
+  } else {
+    const summaryText = session.kind === "followup" ? RESULT_TEXT_FOLLOWUP : RESULT_TEXT;
+    const grid = el("div", { class: "summary-grid" });
+    for (const key of ["best", "ok", "poor", "miss"]) {
+      grid.append(el("div", { class: "metric" }, [
+        el("span", { text: RESULT_LABELS[key] }),
+        el("strong", { text: String(session.summary[key] ?? 0) }),
+        el("small", { text: summaryText[key] }),
+      ]));
+    }
+    root.append(grid);
   }
-  root.append(grid);
   root.append(el("button", { class: "primary-btn", type: "button", text: "ホームへ戻る" }));
   root.querySelector("button").addEventListener("click", callbacks.finish);
   return root;
@@ -351,13 +350,16 @@ export function renderPracticeSession({ questions, session, onUpdate, onFinish }
 
   const callbacks = {
     submit(input) {
-      const autoGrade = isKnockQuestion(q)
-        ? gradeKnock(input, q)
-        : isFollowupQuestion(q)
-          ? gradeFollowup(input, q)
-          : isDeepQuestion(q)
-            ? gradeAnswerAL(input, q)
-            : gradeAnswer(input, q);
+      if (isKnockQuestion(q)) {
+        touchStreak();
+        onUpdate({ ...session, input, autoGrade: gradeKnock(), finalResult: null, phase: "answer" });
+        return;
+      }
+      const autoGrade = isFollowupQuestion(q)
+        ? gradeFollowup(input, q)
+        : isDeepQuestion(q)
+          ? gradeAnswerAL(input, q)
+          : gradeAnswer(input, q);
       const next = { ...session, input, autoGrade, finalResult: null, phase: "answer" };
       if (autoGrade.result !== "unknown") {
         recordAttempt(q.id, input, autoGrade.result);
