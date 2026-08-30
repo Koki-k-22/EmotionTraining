@@ -574,3 +574,24 @@ textarea {
 .model-list b {
   color: var(--primary);
 }
+
+.model-answers {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 14px 16px 14px 36px;
+}
+
+.model-answers .model-reply {
+  margin: 0;
+}
+
+.model-answers .model-why {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+
+.answer-group > .hint {
+  padding: 0 16px 12px;
+  margin: 0;
+}

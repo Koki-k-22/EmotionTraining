@@ -2,7 +2,7 @@ import { getDueQuestionIds } from "../store.js";
 import { createReviewSession, renderPracticeSession } from "./practice.js";
 
 export function renderReview({ questions, session, onUpdate, onFinish }) {
-  const questionIds = new Set(questions.map((q) => q.id));
+  const questionIds = new Set(questions.filter((q) => q.kind !== "knock").map((q) => q.id));
   const dueIds = getDueQuestionIds().filter((id) => questionIds.has(id));
 
   if (!session) {
