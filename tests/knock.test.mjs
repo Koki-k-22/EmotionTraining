@@ -26,6 +26,10 @@ test("knock データ: 5話題×10ペルソナ=50本、各回答文に8型の模
     assert.deepEqual(Object.keys(item.questions).sort(), [...KNOCK_TYPE_ORDER].sort(), item.id);
     assert.ok(master.topics[item.topic], `${item.id}: topic`);
     assert.ok(master.personas[item.persona], `${item.id}: persona`);
+    assert.ok(
+      item.answer.length >= 25 && item.answer.length <= 90,
+      `${item.id}: answer length ${item.answer.length}（会話の一投目: 25〜90字）`,
+    );
     const phrases = new Set();
     for (const key of KNOCK_TYPE_ORDER) {
       assert.equal(item.questions[key].length, 3, `${item.id}/${key}: 3 variants`);
